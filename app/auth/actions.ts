@@ -4,10 +4,10 @@ import { createClient } from "@/lib/supabase/server"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 
-export async function signIn(formData: FormData) {
+export async function signIn(prevState: any, formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -53,11 +53,11 @@ export async function signIn(formData: FormData) {
   return { success: true, message: "Login successful, redirecting..." }
 }
 
-export async function signUp(formData: FormData) {
+export async function signUp(prevState: any, formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
   const role = (formData.get("role") as string) || "kunde" // Default to 'kunde' if not specified
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -91,17 +91,17 @@ export async function signUp(formData: FormData) {
 }
 
 export async function signOut() {
-  const supabase = createClient()
+  const supabase = await createClient()
   await supabase.auth.signOut()
   redirect("/login")
 }
 
-export async function resetPassword(formData: FormData) {
+export async function resetPassword(prevState: any, formData: FormData) {
   const email = formData.get("email") as string
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${headers().get("origin")}/auth/callback/password-reset`, // Adjust redirect URL as needed
+    redirectTo: `${(await headers()).get("origin")}/auth/callback/password-reset`, // Adjust redirect URL as needed
   })
 
   if (error) {

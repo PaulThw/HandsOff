@@ -4,10 +4,10 @@ import { redirect } from "next/navigation"
 export default async function AppleCallbackPage({
   searchParams,
 }: {
-  searchParams: { code?: string }
+  searchParams: Promise<{ code?: string }>
 }) {
-  const code = searchParams.code
-  const supabase = createClient()
+  const { code } = await searchParams
+  const supabase = await createClient()
 
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)

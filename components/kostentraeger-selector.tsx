@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Info } from "lucide-react"
-import { getKostentraeger, getTerminKategorie, type TerminKategorie } from "@/lib/kostentraeger"
+import { lookupKostentraeger, getTerminKategorie, type TerminKategorie } from "@/lib/kostentraeger"
 
 interface KostentraegerSelectorProps {
   anlass: string
@@ -21,7 +21,7 @@ export default function KostentraegerSelector({
 
   // Automatische Kategoriezuordnung basierend auf Anlass
   const automaticKategorie = getTerminKategorie(anlass)
-  const automaticKostentraeger = getKostentraeger(bundesland, automaticKategorie)
+  const automaticKostentraeger = lookupKostentraeger(bundesland, automaticKategorie)
 
   const kategorien: { value: TerminKategorie; label: string; description: string }[] = [
     { value: "gesundheit", label: "Gesundheit", description: "Arzttermine, Therapien, Krankenhausaufenthalte" },
@@ -33,7 +33,7 @@ export default function KostentraegerSelector({
 
   const handleKategorieChange = (kategorie: TerminKategorie) => {
     setSelectedKategorie(kategorie)
-    const kostentraeger = getKostentraeger(bundesland, kategorie)
+    const kostentraeger = lookupKostentraeger(bundesland, kategorie)
     onKostentraegerChange(kostentraeger, kategorie)
   }
 
@@ -73,7 +73,7 @@ export default function KostentraegerSelector({
         <div className="bg-secondary rounded-lg p-4">
           <h4 className="font-medium mb-2">Zuständiger Kostenträger:</h4>
           <Badge variant="outline" className="text-sm">
-            {getKostentraeger(bundesland, selectedKategorie)}
+            {lookupKostentraeger(bundesland, selectedKategorie)}
           </Badge>
         </div>
       )}

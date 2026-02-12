@@ -15,9 +15,9 @@ import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { useActionState } from "react"
-import { createNewAppointment, getDolmetscherAppointments } from "../actions"
+import { createNewAppointment, getDolmetscherAppointments, getKostentraegers } from "../actions"
 import { toast } from "sonner"
-import { getKostentraeger } from "@/lib/kostentraeger" // Assuming this exists
+import { lookupKostentraeger } from "@/lib/kostentraeger"
 
 interface Appointment {
   id: string
@@ -66,7 +66,7 @@ export default function DolmetscherTerminePage() {
 
   useEffect(() => {
     const fetchKostentraeger = async () => {
-      const data = await getKostentraeger()
+      const data = await getKostentraegers()
       setKostentraegerList(data)
     }
     fetchKostentraeger()

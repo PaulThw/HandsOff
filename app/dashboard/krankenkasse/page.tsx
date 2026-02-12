@@ -6,7 +6,7 @@ import { Heart, FileCheck, CreditCard, BarChart3, Users, Shield, LogOut } from "
 import Link from "next/link"
 
 export default async function KrankenkasseDashboardPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()

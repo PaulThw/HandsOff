@@ -8,14 +8,14 @@ import { Eye, EyeOff, ArrowLeft, Briefcase } from "lucide-react"
 import Link from "next/link"
 import OAuthButtons from "@/components/oauth-buttons"
 import { signUp } from "@/app/auth/actions"
-import { useFormState } from "react-dom"
+import { useActionState } from "react"
 
 export default function DolmetscherRegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [newsletterOptIn, setNewsletterOptIn] = useState(false)
-  const [state, formAction] = useFormState(signUp, undefined)
+  const [state, formAction] = useActionState(signUp, undefined)
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-apricot-50 to-apricot-100 flex flex-col">
@@ -131,7 +131,7 @@ export default function DolmetscherRegisterPage() {
                 <Checkbox
                   id="terms"
                   checked={agreedToTerms}
-                  onCheckedChange={setAgreedToTerms}
+                  onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
                   className="border-gray-300"
                   required
                 />
@@ -151,7 +151,7 @@ export default function DolmetscherRegisterPage() {
                 <Checkbox
                   id="newsletter"
                   checked={newsletterOptIn}
-                  onCheckedChange={setNewsletterOptIn}
+                  onCheckedChange={(checked) => setNewsletterOptIn(checked === true)}
                   className="border-gray-300"
                 />
                 <Label htmlFor="newsletter" className="text-sm text-gray-600">

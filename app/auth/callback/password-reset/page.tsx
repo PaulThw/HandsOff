@@ -9,11 +9,10 @@ import { CheckCircle, XCircle } from "lucide-react"
 export default async function PasswordResetCallbackPage({
   searchParams,
 }: {
-  searchParams: { error_description?: string; code?: string }
+  searchParams: Promise<{ error_description?: string; code?: string }>
 }) {
-  const errorDescription = searchParams.error_description
-  const code = searchParams.code
-  const supabase = createClient()
+  const { error_description: errorDescription, code } = await searchParams
+  const supabase = await createClient()
 
   if (errorDescription) {
     return (
@@ -41,7 +40,7 @@ export default async function PasswordResetCallbackPage({
   const updatePassword = async (formData: FormData) => {
     "use server"
     const newPassword = formData.get("password") as string
-    const supabaseServer = createClient()
+    const supabaseServer = await createClient()
 
     const { error } = await supabaseServer.auth.updateUser({
       password: newPassword,

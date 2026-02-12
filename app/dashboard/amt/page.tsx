@@ -6,7 +6,7 @@ import { Building2, FileCheck, Users, BarChart3, Shield, Settings, LogOut } from
 import Link from "next/link"
 
 export default async function AmtDashboardPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()

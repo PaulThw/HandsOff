@@ -5,55 +5,11 @@ import { Star, Filter, MapPin, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import BottomNavigation from "@/components/bottom-navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { getInterpreters } from "@/lib/actions/interpreter"
 
-const dolmetscher = [
-  {
-    id: 1,
-    name: "Maria Schmidt",
-    languages: ["Deutsche Gebärdensprache (DGS)", "Internationale Gebärdensprache"],
-    rating: 4.9,
-    reviews: 127,
-    price: 60,
-    distance: 2.3,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 2,
-    name: "Alexander Weber",
-    languages: ["Deutsche Gebärdensprache (DGS)", "Russische Gebärdensprache (РЖЯ)"],
-    rating: 4.7,
-    reviews: 89,
-    price: 55,
-    distance: 3.8,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 3,
-    name: "Sophia Chen",
-    languages: [
-      "Deutsche Gebärdensprache (DGS)",
-      "Internationale Gebärdensprache",
-      "Amerikanische Gebärdensprache (ASL)",
-    ],
-    rating: 4.8,
-    reviews: 103,
-    price: 65,
-    distance: 1.5,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 4,
-    name: "Omar Al-Farsi",
-    languages: ["Ukrainische Gebärdensprache (УЖМ)", "Internationale Gebärdensprache"],
-    rating: 4.6,
-    reviews: 72,
-    price: 50,
-    distance: 4.2,
-    image: "/placeholder.svg?height=200&width=200",
-  },
-]
+export default async function DolmetscherPage() {
+  const dolmetscher = await getInterpreters();
 
-export default function DolmetscherPage() {
   return (
     <main className="flex min-h-screen flex-col pb-20">
       <div className="bg-secondary p-4 sticky top-0 z-10">
@@ -104,27 +60,29 @@ export default function DolmetscherPage() {
                 <div className="p-4">
                   <div className="flex gap-4">
                     <Avatar className="h-16 w-16 rounded-lg">
-                      <AvatarImage src={item.image || "/placeholder.svg"} alt={item.name} />
+                      <AvatarImage src={item.avatar_url || "/placeholder.svg"} alt={item.full_name || "Interpreter"} />
                       <AvatarFallback>
-                        {item.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
+                        {item.full_name
+                          ? item.full_name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                          : "??"}
                       </AvatarFallback>
                     </Avatar>
 
                     <div className="flex-1">
                       <div className="flex justify-between items-start">
-                        <h3 className="font-bold">{item.name}</h3>
+                        <h3 className="font-bold">{item.full_name}</h3>
                         <div className="flex items-center">
                           <Star className="h-4 w-4 text-yellow-400 fill-yellow-400 mr-1" />
-                          <span className="text-sm">{item.rating}</span>
-                          <span className="text-xs text-gray-400 ml-1">({item.reviews})</span>
+                          <span className="text-sm">5.0</span>
+                          <span className="text-xs text-gray-400 ml-1">(Neu)</span>
                         </div>
                       </div>
 
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {item.languages.map((lang) => (
+                        {item.languages?.map((lang) => (
                           <Badge key={lang} variant="outline" className="text-xs">
                             {lang}
                           </Badge>
@@ -134,9 +92,9 @@ export default function DolmetscherPage() {
                       <div className="flex justify-between items-center mt-2">
                         <div className="flex items-center text-sm text-gray-400">
                           <MapPin className="h-3 w-3 mr-1" />
-                          <span>{item.distance} km entfernt</span>
+                          <span>{item.location || "Online"}</span>
                         </div>
-                        <div className="font-bold text-petrol-400">{item.price} €/h</div>
+                        <div className="font-bold text-petrol-400">{item.hourly_rate || 0} €/h</div>
                       </div>
                     </div>
                   </div>
@@ -144,6 +102,11 @@ export default function DolmetscherPage() {
               </div>
             </Link>
           ))}
+          {dolmetscher.length === 0 && (
+            <div className="text-center text-gray-400 py-8">
+              Keine Dolmetscher gefunden.
+            </div>
+          )}
         </div>
       </div>
 

@@ -30,14 +30,17 @@ export default function BenachrichtigungenPage() {
     },
   })
 
-  const handleToggle = (category: string, setting: string) => {
-    setSettings((prev) => ({
-      ...prev,
-      [category]: {
-        ...prev[category as keyof typeof prev],
-        [setting]: !prev[category as keyof typeof prev][setting as keyof typeof prev.email],
-      },
-    }))
+  const handleToggle = (category: keyof typeof settings, setting: string) => {
+    setSettings((prev) => {
+      const categorySettings = prev[category] as any
+      return {
+        ...prev,
+        [category]: {
+          ...categorySettings,
+          [setting]: !categorySettings[setting],
+        },
+      }
+    })
   }
 
   const handleSave = () => {

@@ -8,18 +8,18 @@ import { Eye, EyeOff, ArrowLeft, Heart, FileCheck, CreditCard, BarChart3, Users,
 import Link from "next/link"
 import OAuthButtons from "@/components/oauth-buttons"
 import { signIn } from "@/app/auth/actions"
-import { useFormState } from "react-dom"
+import { useActionState } from "react"
 
 export default function KrankenkasseLoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
-  const [state, formAction] = useFormState(signIn, undefined)
+  const [state, formAction] = useActionState(signIn, undefined)
 
   const fillDemoCredentials = () => {
     const form = document.getElementById("login-form") as HTMLFormElement
     if (form) {
-      ;(form.elements.namedItem("email") as HTMLInputElement).value = "krankenkasse@example.com"
-      ;(form.elements.namedItem("password") as HTMLInputElement).value = "123456"
+      ; (form.elements.namedItem("email") as HTMLInputElement).value = "krankenkasse@example.com"
+        ; (form.elements.namedItem("password") as HTMLInputElement).value = "123456"
     }
   }
 
@@ -175,7 +175,7 @@ export default function KrankenkasseLoginPage() {
                 <Checkbox
                   id="remember"
                   checked={rememberMe}
-                  onCheckedChange={setRememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked === true)}
                   className="border-gray-300"
                 />
                 <Label htmlFor="remember" className="text-sm text-gray-600">

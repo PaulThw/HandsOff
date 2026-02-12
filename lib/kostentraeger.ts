@@ -140,7 +140,7 @@ export const kostentraegerData: Kostentraeger[] = [
 
 export type TerminKategorie = "bildung" | "gesundheit" | "gericht" | "arbeit" | "alltag"
 
-export function getKostentraeger(bundesland: string, kategorie: TerminKategorie): string {
+export function lookupKostentraeger(bundesland: string, kategorie: TerminKategorie): string {
   const data = kostentraegerData.find((k) => k.bundesland === bundesland)
   if (!data) return "Kostenträger nicht gefunden"
 

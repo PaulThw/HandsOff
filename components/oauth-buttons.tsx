@@ -1,6 +1,4 @@
-"use client"
-
-import { getSupabaseBrowser } from "@/lib/supabase/client"
+import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Apple, Github, ChromeIcon as Google } from "lucide-react"
 
@@ -9,7 +7,7 @@ interface OAuthButtonsProps {
 }
 
 export default function OAuthButtons({ mode }: OAuthButtonsProps) {
-  const supabase = getSupabaseBrowser()
+  const supabase = createClient()
 
   const handleOAuthSignIn = async (provider: "google" | "apple" | "github") => {
     const { error } = await supabase.auth.signInWithOAuth({

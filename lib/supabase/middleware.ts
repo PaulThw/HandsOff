@@ -1,26 +1,36 @@
-/**
- * Helper für Next.js-Middleware – liefert Supabase-Client + Response-Objekt
- */
-import type { NextRequest, NextFetchEvent } from "next/server"
-import { NextResponse } from "next/server"
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs"
-import type { SupabaseClient } from "@supabase/supabase-js"
+import { createServerClient } from "@supabase/ssr"
+import { type NextRequest, NextResponse } from "next/server"
 
-export function createClient(
-  req: NextRequest,
-  _ev?: NextFetchEvent,
-): { supabase: SupabaseClient; response: NextResponse } {
-  const response = NextResponse.next()
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-  const supabase = createMiddlewareClient(
-    { req, res: response },
-    {
-      supabaseUrl,
-      supabaseKey,
+export function createClient(request: NextRequest) {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
     },
+  })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            request.cookies.set(name, value)
+          )
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
   )
 
   return { supabase, response }

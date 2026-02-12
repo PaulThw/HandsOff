@@ -18,8 +18,8 @@ export default function DolmetscherLoginPage() {
   const fillDemoCredentials = () => {
     const form = document.getElementById("login-form") as HTMLFormElement
     if (form) {
-      ;(form.elements.namedItem("email") as HTMLInputElement).value = "dolmetscher@example.com"
-      ;(form.elements.namedItem("password") as HTMLInputElement).value = "123456"
+      ; (form.elements.namedItem("email") as HTMLInputElement).value = "dolmetscher@example.com"
+        ; (form.elements.namedItem("password") as HTMLInputElement).value = "123456"
     }
   }
 
@@ -162,7 +162,7 @@ export default function DolmetscherLoginPage() {
                 <Checkbox
                   id="remember"
                   checked={rememberMe}
-                  onCheckedChange={setRememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked === true)}
                   className="border-gray-300"
                 />
                 <Label htmlFor="remember" className="text-sm text-gray-600">

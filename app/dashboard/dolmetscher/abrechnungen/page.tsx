@@ -6,9 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { FileText, Euro, Send } from "lucide-react"
 import { useActionState } from "react"
-import { createInvoice, getCompletedAppointmentsForInvoicing, getInvoices, sendInvoice } from "../actions"
+import { createInvoice, getCompletedAppointmentsForInvoicing, getInvoices, sendInvoice, getKostentraegers } from "../actions"
 import { toast } from "sonner"
-import { getKostentraeger } from "@/lib/kostentraeger"
+import { getTerminKategorie, lookupKostentraeger } from "@/lib/kostentraeger"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 
@@ -77,7 +77,7 @@ export default function DolmetscherAbrechnungenPage() {
     const [appts, invs, kts] = await Promise.all([
       getCompletedAppointmentsForInvoicing(),
       getInvoices(),
-      getKostentraeger(),
+      getKostentraegers(),
     ])
     setAppointmentsToInvoice(appts as AppointmentForInvoice[])
     setInvoices(invs as Invoice[])

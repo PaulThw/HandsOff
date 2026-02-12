@@ -3,58 +3,11 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, MapPin, Video, MoreHorizontal, FileText } from "lucide-react"
 import BottomNavigation from "@/components/bottom-navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { getBookingsForUser } from "@/lib/actions/booking"
 
-const termine = [
-  {
-    id: 1,
-    dolmetscher: {
-      name: "Maria Schmidt",
-      image: "/placeholder.svg?height=200&width=200",
-    },
-    date: "Heute",
-    time: "14:00",
-    duration: "1 Stunde",
-    type: "persönlich",
-    location: "Berliner Str. 45, 10713 Berlin",
-    status: "upcoming",
-    anlass: "Arzttermin",
-    kostentraeger: "Krankenkasse",
-    bundesland: "Berlin",
-  },
-  {
-    id: 2,
-    dolmetscher: {
-      name: "Alexander Weber",
-      image: "/placeholder.svg?height=200&width=200",
-    },
-    date: "15. Mai 2025",
-    time: "10:30",
-    duration: "2 Stunden",
-    type: "video",
-    status: "upcoming",
-    anlass: "Elterngespräch",
-    kostentraeger: "Schulaufsicht / Senatsverwaltung für Bildung",
-    bundesland: "Berlin",
-  },
-  {
-    id: 3,
-    dolmetscher: {
-      name: "Sophia Chen",
-      image: "/placeholder.svg?height=200&width=200",
-    },
-    date: "10. April 2025",
-    time: "13:00",
-    duration: "1 Stunde",
-    type: "persönlich",
-    location: "Hauptstr. 22, 10827 Berlin",
-    status: "completed",
-    anlass: "Bewerbungsgespräch",
-    kostentraeger: "Arbeitsagentur / Integrationsamt / Rentenversicherung",
-    bundesland: "Berlin",
-  },
-]
+export default async function TerminePage() {
+  const termine = await getBookingsForUser();
 
-export default function TerminePage() {
   return (
     <main className="flex min-h-screen flex-col pb-20">
       <div className="bg-secondary p-4 sticky top-0 z-10">
@@ -75,28 +28,27 @@ export default function TerminePage() {
         </div>
 
         <div className="space-y-4">
-          {termine.map((termin) => (
+          {termine.map((termin: any) => (
             <div key={termin.id} className="bg-secondary rounded-lg overflow-hidden">
               <div className="p-4">
                 <div className="flex gap-4">
                   <Avatar className="h-16 w-16 rounded-lg">
-                    <AvatarImage src={termin.dolmetscher.image || "/placeholder.svg"} alt={termin.dolmetscher.name} />
+                    <AvatarImage src={termin.interpreter?.avatar_url || "/placeholder.svg"} alt={termin.interpreter?.full_name || "Interpreter"} />
                     <AvatarFallback>
-                      {termin.dolmetscher.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                      {termin.interpreter?.full_name
+                        ? termin.interpreter.full_name.split(" ").map((n: string) => n[0]).join("")
+                        : "??"}
                     </AvatarFallback>
                   </Avatar>
 
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
-                      <h3 className="font-bold">{termin.dolmetscher.name}</h3>
+                      <h3 className="font-bold">{termin.interpreter?.full_name}</h3>
                       <Badge
-                        variant={termin.status === "upcoming" ? "default" : "outline"}
-                        className={termin.status === "upcoming" ? "bg-petrol-600 hover:bg-petrol-700" : ""}
+                        variant={termin.status === "pending" || termin.status === "confirmed" ? "default" : "outline"}
+                        className={termin.status === "pending" || termin.status === "confirmed" ? "bg-petrol-600 hover:bg-petrol-700" : ""}
                       >
-                        {termin.status === "upcoming" ? "Bevorstehend" : "Abgeschlossen"}
+                        {termin.status}
                       </Badge>
                     </div>
 
@@ -104,60 +56,26 @@ export default function TerminePage() {
                       <div className="flex items-center text-sm">
                         <Calendar className="h-4 w-4 mr-2 text-petrol-400" />
                         <span>
-                          {termin.date}, {termin.time} Uhr ({termin.duration})
+                          {termin.date}, {termin.start_time} ({termin.duration_minutes} min)
                         </span>
                       </div>
 
                       <div className="flex items-center text-sm">
-                        {termin.type === "persönlich" ? (
-                          <>
-                            <MapPin className="h-4 w-4 mr-2 text-petrol-400" />
-                            <span>{termin.location}</span>
-                          </>
-                        ) : (
-                          <>
-                            <Video className="h-4 w-4 mr-2 text-petrol-400" />
-                            <span>Video-Dolmetschen</span>
-                          </>
-                        )}
+                        <MapPin className="h-4 w-4 mr-2 text-petrol-400" />
+                        <span>{termin.location || "Online"}</span>
                       </div>
 
                       <div className="flex items-center text-sm">
                         <FileText className="h-4 w-4 mr-2 text-apricot-400" />
-                        <span className="text-gray-400">Anlass:</span>
-                        <span className="ml-1">{termin.anlass}</span>
-                      </div>
-
-                      <div className="bg-petrol-900/20 rounded p-2 mt-2">
-                        <div className="flex items-center text-xs">
-                          <FileText className="h-3 w-3 mr-1 text-petrol-400" />
-                          <span className="text-gray-400">Kostenträger:</span>
-                        </div>
-                        <span className="text-xs text-petrol-300">{termin.kostentraeger}</span>
+                        <span className="text-gray-400">Notizen:</span>
+                        <span className="ml-1">{termin.notes || "-"}</span>
                       </div>
                     </div>
 
                     <div className="flex gap-2 mt-3">
-                      {termin.status === "upcoming" && termin.type === "video" && (
-                        <Button size="sm" className="bg-petrol-600 hover:bg-petrol-700">
-                          Videocall starten
-                        </Button>
-                      )}
-
-                      {termin.status === "upcoming" && (
-                        <Button size="sm" variant="outline">
-                          Details
-                        </Button>
-                      )}
-
-                      {termin.status === "completed" && (
-                        <Button size="sm" variant="outline">
-                          Bewerten
-                        </Button>
-                      )}
-
-                      <Button size="sm" variant="ghost" className="ml-auto">
-                        <MoreHorizontal className="h-4 w-4" />
+                      {/* Actions based on status could go here */}
+                      <Button size="sm" variant="outline">
+                        Details
                       </Button>
                     </div>
                   </div>
@@ -165,6 +83,11 @@ export default function TerminePage() {
               </div>
             </div>
           ))}
+          {termine.length === 0 && (
+            <div className="text-center text-gray-400 py-8">
+              Keine Termine gefunden.
+            </div>
+          )}
         </div>
       </div>
 

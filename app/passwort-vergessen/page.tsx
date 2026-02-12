@@ -5,10 +5,10 @@ import { Label } from "@/components/ui/label"
 import { ArrowLeft, Mail } from "lucide-react"
 import Link from "next/link"
 import { resetPassword } from "@/app/auth/actions"
-import { useFormState } from "react-dom"
+import { useActionState } from "react"
 
 export default function ForgotPasswordPage() {
-  const [state, formAction] = useFormState(resetPassword, undefined)
+  const [state, formAction] = useActionState(resetPassword, undefined)
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">

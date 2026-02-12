@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
 export async function getDolmetscherAppointments() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -34,7 +34,7 @@ export async function getDolmetscherAppointments() {
 }
 
 export async function updateAppointmentStatus(appointmentId: string, status: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -60,7 +60,7 @@ export async function updateAppointmentStatus(appointmentId: string, status: str
 }
 
 export async function createNewAppointment(formData: FormData) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -104,7 +104,7 @@ export async function createNewAppointment(formData: FormData) {
 }
 
 export async function getCompletedAppointmentsForInvoicing() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -134,7 +134,7 @@ export async function getCompletedAppointmentsForInvoicing() {
 }
 
 export async function createInvoice(terminId: string, amount: number, kostentraegerId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -162,7 +162,7 @@ export async function createInvoice(terminId: string, amount: number, kostentrae
 }
 
 export async function getInvoices() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -191,7 +191,7 @@ export async function getInvoices() {
 }
 
 export async function sendInvoice(invoiceId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -213,4 +213,20 @@ export async function sendInvoice(invoiceId: string) {
 
   revalidatePath("/dashboard/dolmetscher/abrechnungen")
   return { success: true, message: "Rechnung erfolgreich gesendet." }
+}
+
+export async function getKostentraegers() {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, name:full_name")
+    .in("role", ["amt", "krankenkasse"])
+    .order("full_name", { ascending: true })
+
+  if (error) {
+    console.error("Error fetching kostentraegers:", error)
+    return []
+  }
+  return data
 }
